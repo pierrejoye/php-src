@@ -2604,6 +2604,20 @@ AC_DEFUN([PHP_INSTALL_HEADERS],[
   ])
 ])
 
+dnl 
+dnl PHP_BUILTIN_SCRIPT(name, file)
+dnl
+dnl data to be built with the extension 
+dnl
+AC_DEFUN([PHP_BUILTIN_SCRIPT],[
+    destdir=PHP_EXT_DIR($1)
+
+    echo "const char *$1_script =" > $destdir/builtinscript.c && hexdump -e '16/1 "_x%02X" "\n"' $2 | sed 's/_/\\/g; s/\\x  //g; s/.*/    "&"/' >> $destdir/builtinscript.c && echo ";" >> $destdir/builtinscript.c
+	echo "extern const char *$1_script;" > $destdir/builtinscript.h
+    PHP_ADD_SOURCES(PHP_EXT_DIR($1), builtinscript.c)
+  ])
+])
+
 dnl
 dnl PHP_AP_EXTRACT_VERSION(/path/httpd)
 dnl

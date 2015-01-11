@@ -30,6 +30,7 @@
 #include "zend_interfaces.h"
 #include "lib/timelib.h"
 #include <time.h>
+#include "builtinscript.h"
 
 #ifdef PHP_WIN32
 static __inline __int64 php_date_llabs( __int64 i ) { return i >= 0? i: -i; }
@@ -693,6 +694,8 @@ static void _php_date_tzinfo_dtor(zval *zv) /* {{{ */
 /* {{{ PHP_RINIT_FUNCTION */
 PHP_RINIT_FUNCTION(date)
 {
+	zval script;
+
 	if (DATEG(timezone)) {
 		efree(DATEG(timezone));
 	}
@@ -700,6 +703,7 @@ PHP_RINIT_FUNCTION(date)
 	DATEG(tzcache) = NULL;
 	DATEG(last_errors) = NULL;
 
+	zend_execute_string(ZEND_REQUIRE, &script, date_script, strlen(date_script), "date_builtin_php");
 	return SUCCESS;
 }
 /* }}} */
